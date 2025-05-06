@@ -1,0 +1,2 @@
+# data-visualization-dashboard
+Web application providing data entry for customers and a sales dashboard with charts and filters for administrators. Built with React, Node.js, Prisma, and PostgreSQL in a monolithic architecture.
