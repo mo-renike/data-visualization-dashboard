@@ -5,7 +5,6 @@ export interface User {
   email: string;
   name: string;
   role: UserRole;
-  password?: string;
 }
 
 export interface Order {
@@ -20,9 +19,10 @@ export interface Order {
   createdAt: Date;
 }
 
-export interface AuthResponse {
-  user: Omit<User, "password">;
-  token: string;
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  token: string | null;
 }
 
 export interface DashboardStats {
