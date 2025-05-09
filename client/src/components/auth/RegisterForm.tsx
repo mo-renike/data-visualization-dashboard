@@ -1,40 +1,19 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-
-// Define form schema
-const registerSchema = Yup.object({
-  name: Yup.string()
-    .required("Name is required")
-    .min(2, "Name must be at least 2 characters long"),
-  email: Yup.string()
-    .required("Email is required")
-    .email("Please enter a valid email address"),
-  password: Yup.string()
-    .required("Password is required")
-    .min(6, "Password must be at least 6 characters long"),
-  confirmPassword: Yup.string()
-    .required("Confirm password is required")
-    .oneOf([Yup.ref("password")], "Passwords don't match"),
-});
-
-interface RegisterFormValues {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  role: "admin" | "customer";
-}
+import InputField from "../ui/InputField";
+import CustomButton from "../ui/Button";
+import { registerSchema } from "../../validation/validations";
 
 const Register = () => {
   const { register: registerUser } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (
-    values: RegisterFormValues,
+    values: any,
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ) => {
     try {
@@ -45,7 +24,6 @@ const Register = () => {
         values.password,
         values.role
       );
-      // Registration automatically logs the user in via the AuthContext
       navigate("/customer/dashboard");
     } catch (err: any) {
       setError(
@@ -56,7 +34,7 @@ const Register = () => {
     }
   };
 
-  const initialValues: RegisterFormValues = {
+  const initialValues = {
     name: "",
     email: "",
     password: "",
@@ -65,33 +43,11 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <div className="mx-auto h-12 w-12 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold">
-            XYZ
-          </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{" "}
-            <Link
-              to="/login"
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              sign in to your existing account
-            </Link>
-          </p>
-        </div>
-
+    <div className="flex items-center justify-center">
+      <div className="max-w-md w-full">
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            </div>
+            <p className="text-sm text-red-700">{error}</p>
           </div>
         )}
 
@@ -101,107 +57,80 @@ const Register = () => {
           onSubmit={handleSubmit}
         >
           {({ errors, touched, isSubmitting }) => (
-            <Form className="mt-8 space-y-6">
-              <div className="rounded-md shadow-sm -space-y-px">
-                <div>
-                  <label htmlFor="name" className="sr-only">
-                    Full Name
-                  </label>
-                  <Field
-                    id="name"
-                    name="name"
-                    type="text"
-                    autoComplete="name"
-                    className={`appearance-none rounded-none rounded-t-md relative block w-full px-3 py-2 border ${
-                      errors.name && touched.name
-                        ? "border-red-300"
-                        : "border-gray-300"
-                    } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                    placeholder="Full Name"
-                  />
-                  <ErrorMessage
-                    name="name"
-                    component="p"
-                    className="mt-1 text-xs text-red-600"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="sr-only">
-                    Email address
-                  </label>
-                  <Field
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
-                      errors.email && touched.email
-                        ? "border-red-300"
-                        : "border-gray-300"
-                    } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                    placeholder="Email address"
-                  />
-                  <ErrorMessage
-                    name="email"
-                    component="p"
-                    className="mt-1 text-xs text-red-600"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="password" className="sr-only">
-                    Password
-                  </label>
-                  <Field
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="new-password"
-                    className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
-                      errors.password && touched.password
-                        ? "border-red-300"
-                        : "border-gray-300"
-                    } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                    placeholder="Password"
-                  />
-                  <ErrorMessage
-                    name="password"
-                    component="p"
-                    className="mt-1 text-xs text-red-600"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="confirmPassword" className="sr-only">
-                    Confirm Password
-                  </label>
-                  <Field
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    autoComplete="new-password"
-                    className={`appearance-none rounded-none rounded-b-md relative block w-full px-3 py-2 border ${
-                      errors.confirmPassword && touched.confirmPassword
-                        ? "border-red-300"
-                        : "border-gray-300"
-                    } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
-                    placeholder="Confirm Password"
-                  />
-                  <ErrorMessage
-                    name="confirmPassword"
-                    component="p"
-                    className="mt-1 text-xs text-red-600"
-                  />
-                </div>
-              </div>
-
+            <Form className="rounded-md shadow-sm p-4">
+              <InputField
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Full Name"
+                autoComplete="name"
+                errors={errors.name}
+                touched={touched.name}
+              />
+              <InputField
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Email address"
+                autoComplete="email"
+                errors={errors.email}
+                touched={touched.email}
+              />
+              <InputField
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Password"
+                autoComplete="new-password"
+                showPasswordToggle
+                showPassword={showPassword}
+                togglePasswordVisibility={() => setShowPassword(!showPassword)}
+                errors={errors.password}
+                touched={touched.password}
+              />
+              <InputField
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                placeholder="Confirm Password"
+                autoComplete="new-password"
+                showPasswordToggle
+                showPassword={showPassword}
+                togglePasswordVisibility={() => setShowPassword(!showPassword)}
+                errors={errors.confirmPassword}
+                touched={touched.confirmPassword}
+              />
               <div>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
+                <label htmlFor="role" className="sr-only">
+                  Role
+                </label>
+                <Field
+                  as="select"
+                  id="role"
+                  name="role"
+                  className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
+                    errors.role && touched.role
+                      ? "border-red-300"
+                      : "border-gray-300"
+                  } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
                 >
-                  {isSubmitting ? "Creating account..." : "Create account"}
-                </button>
+                  <option value="">Select A Role</option>
+                  <option value="customer">Customer</option>
+                  <option value="admin">Admin</option>
+                </Field>
+                <ErrorMessage
+                  name="role"
+                  component="p"
+                  className="mt-1 text-xs text-red-600"
+                />
               </div>
+              <br />
+              <CustomButton
+                text={isSubmitting ? "Creating account..." : "Create account"}
+                loading={isSubmitting}
+                disabled={isSubmitting}
+                variant="contained"
+              />
             </Form>
           )}
         </Formik>

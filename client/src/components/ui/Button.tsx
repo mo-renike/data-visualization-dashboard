@@ -74,12 +74,12 @@ export default function CustomButton({
   const commonClasses = `
         rounded-lg 
         px-4 py-2 
-        min-w-fit 
+        min-w-full 
         text-sm 
         font-medium 
-        tracking-wider 
         flex 
         items-center 
+        justify-center
         capitalize 
         font-sans 
         ${getBackgroundColor()} 

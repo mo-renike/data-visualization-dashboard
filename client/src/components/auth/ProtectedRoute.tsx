@@ -13,7 +13,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { auth } = useAuth();
 
   if (!auth.isAuthenticated) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (
@@ -23,7 +23,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     if (auth.user?.role === "admin") {
       return <Navigate to="/dashboard" replace />;
     } else {
-      return <Navigate to="/orders" replace />;
+      return <Navigate to="/customer" replace />;
     }
   }
 

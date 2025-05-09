@@ -20,7 +20,7 @@ const App = () => (
           <Route path="/dashboard" element={<AdminDashboard />} />
         </Route>
         <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>
-          <Route path="/orders" element={<CustomerDashboard />} />
+          <Route path="/customer" element={<CustomerDashboard />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />

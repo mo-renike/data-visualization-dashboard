@@ -16,13 +16,18 @@ const CustomTabs: React.FC<CustomTabsProps> = ({ tabs, defaultValue }) => {
 
   return (
     <div>
+      <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        {activeTab === "login"
+          ? "Sign in to your account"
+          : "Create your account"}
+      </h2>
       <div className="flex border-b border-gray-200">
         {tabs.map((tab) => (
           <button
             key={tab.value}
             className={`flex-1 py-2 text-center ${
               activeTab === tab.value
-                ? "border-b-2 border-brand-blue text-brand-blue"
+                ? "border-b-2 border-[#2563EB] text-[#2563EB]"
                 : "text-gray-600"
             }`}
             onClick={() => setActiveTab(tab.value)}
@@ -30,8 +35,9 @@ const CustomTabs: React.FC<CustomTabsProps> = ({ tabs, defaultValue }) => {
             {tab.label}
           </button>
         ))}
-      </div>
-      <div className="mt-6">
+      </div>{" "}
+      <br />
+      <div>
         {tabs.map(
           (tab) =>
             activeTab === tab.value && (
