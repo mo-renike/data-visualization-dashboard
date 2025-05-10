@@ -1,33 +1,59 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { PrismaClient } from "@prisma/client";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+const prisma = new PrismaClient();
 
-export const authMiddleware = (
-  req: Request,
+export interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    role: string;
+  };
+}
+
+export const authMiddleware = async (
+  req: AuthRequest,
   res: Response,
   next: NextFunction
-) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ error: "Missing token" });
-
-  const token = authHeader.split(" ")[1];
+): Promise<void> => {
   try {
-    const user = jwt.verify(token, JWT_SECRET);
+    const token = req.header("Authorization")?.replace("Bearer ", "");
 
-    (req as any).user = user;
+    if (!token) {
+      res.status(401).json({ message: "Authentication required" });
+      return;
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+      id: string;
+    };
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+
+    if (!user) {
+      res.status(401).json({ message: "User not found" });
+      return;
+    }
+
+    req.user = {
+      id: user.id,
+      role: user.role,
+    };
+
     next();
-  } catch {
-    return res.status(401).json({ error: "Invalid token" });
+  } catch (error) {
+    res.status(401).json({ message: "Please authenticate" });
+    return;
   }
 };
 
-export const authorize = (roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const user = (req as any).user;
-    if (!roles.includes(user.role)) {
-      return res.status(403).json({ error: "Forbidden" });
-    }
-    next();
-  };
+export const isAdmin = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): void => {
+  if (!req.user || req.user.role !== "ADMIN") {
+    res.status(403).json({ message: "Access denied. Admin only." });
+    return;
+  }
+  next();
 };

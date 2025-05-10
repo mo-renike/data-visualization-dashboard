@@ -16,12 +16,12 @@ const App = () => (
       <Routes>
         <Route path="/login" element={<AuthPage />} />
 
-        <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-          <Route path="/dashboard" element={<AdminDashboard />} />
-        </Route>
-        <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>
-          <Route path="/customer" element={<CustomerDashboard />} />
-        </Route>
+        {/* <Route element={<ProtectedRoute allowedRoles={["admin"]} />}> */}
+        <Route path="/dashboard" element={<AdminDashboard />} />
+        {/* </Route> */}
+        {/* <Route element={<ProtectedRoute allowedRoles={["customer"]} />}> */}
+        <Route path="/customer" element={<CustomerDashboard />} />
+        {/* </Route> */}
 
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="*" element={<NotFoundPage />} />
