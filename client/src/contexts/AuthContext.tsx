@@ -1,7 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { AuthState, User } from "../../../types";
-
-const API_URL = "http://localhost:8080/api";
+import { AuthState, User } from "../types";
+import { API_URL } from "../utils/utils";
 
 interface AuthContextType {
   auth: AuthState;

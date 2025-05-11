@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import InputField from "../ui/InputField";
 import CustomButton from "../ui/Button";
@@ -24,7 +24,11 @@ const Register = () => {
         values.password,
         values.role
       );
-      navigate("/customer/dashboard");
+      if (values.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/customer");
+      }
     } catch (err: any) {
       setError(
         err.response?.data?.message || "Registration failed. Please try again."

@@ -5,7 +5,6 @@ import { authMiddleware, isAdmin, AuthRequest } from "../middleware/auth";
 const router = Router();
 const prisma = new PrismaClient();
 
-// Get all orders - Admin can see all, customers only see their own
 router.get(
   "/",
   authMiddleware,
@@ -20,11 +19,6 @@ router.get(
           orderBy: { orderDate: "desc" },
         });
       } else {
-        // Customer can only see their own orders
-        const userDetails = await prisma.user.findUnique({
-          where: { id: user.id },
-        });
-
         orders = await prisma.order.findMany({
           where: { userId: user.id },
           orderBy: { orderDate: "desc" },
@@ -39,7 +33,6 @@ router.get(
   }
 );
 
-// Create a new order
 router.post(
   "/",
   authMiddleware,
@@ -76,7 +69,6 @@ router.post(
   }
 );
 
-// Get order by ID
 router.get(
   "/:id",
   authMiddleware,
@@ -108,7 +100,6 @@ router.get(
   }
 );
 
-// Update an order - Admin only
 router.put(
   "/:id",
   authMiddleware,

@@ -1,129 +1,91 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { format } from "date-fns";
-import { API_URL } from "../../../utils/utils";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
 import { Line, Pie } from "react-chartjs-2";
 import OrderTable from "../../components/orders/OrderTable";
-
-// Register ChartJS components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-interface DashboardData {
-  totalRevenue: number;
-  orderCount: number;
-  customerCount: number;
-  revenueByMonth: {
-    month: string;
-    revenue: number;
-  }[];
-  ordersByCategory: {
-    category: string;
-    count: number;
-  }[];
-  recentOrders: Order[];
-}
-
-interface Order {
-  id: string;
-  productName: string;
-  productCategory: string;
-  price: number;
-  orderDate: string;
-  customerName: string;
-}
-
-type TimeFilter = "this_month" | "last_month" | "this_year" | "last_year";
+import { fetchDashboardData } from "../../services/dashboardService";
+import { DashboardData, TimeFilter } from "../../types";
+import DateFilter from "../../components/ui/DateFIlter";
 
 const AdminDashboard = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
     null
   );
   const [isLoading, setIsLoading] = useState(true);
-  const [timeFilter, setTimeFilter] = useState<TimeFilter>("this_year");
+
   const [error, setError] = useState<string | null>(null);
+  const [selectedDateFilter, setSelectedDateFilter] = useState("This Year");
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const loadData = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(
-          `${API_URL}/admin/dashboard?timeFilter=${timeFilter}`
-        );
-        setDashboardData(response.data);
         setError(null);
+        const data = await fetchDashboardData(selectedDateFilter as TimeFilter);
+        setDashboardData(data);
       } catch (err) {
-        console.error("Error fetching dashboard data:", err);
-        setError("Failed to load dashboard data. Please try again later.");
+        console.error("Dashboard error:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to load dashboard data"
+        );
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchDashboardData();
-  }, [timeFilter]);
+    loadData();
+  }, [selectedDateFilter]);
 
   // Format the current date
   const currentDate = new Date();
   const formattedDate = format(currentDate, "EEEE, dd MMMM yyyy");
 
   // Prepare chart data
+  // const revenueChartData = {
+  //   labels: dashboardData?.revenueChart.map((item) => item.month) || [],
+  //   datasets: [
+  //     {
+  //       label: "Revenue",
+  //       data: dashboardData?.revenueChart.map((item) => item.revenue) || [],
+  //       borderColor: "rgb(59, 130, 246)",
+  //       backgroundColor: "rgba(59, 130, 246, 0.5)",
+  //       tension: 0.4,
+  //     },
+  //   ],
+  // };
+
+  // const categoryChartData = {
+  //   labels: dashboardData?.categoryChart.map((item) => item.name) || [],
+  //   datasets: [
+  //     {
+  //       label: "Orders by Category",
+  //       data: dashboardData?.categoryChart.map((item) => item.value) || [],
+  //       backgroundColor:
+  //         dashboardData?.categoryChart.map((item) => item.color) || [],
+  //       borderColor:
+  //         dashboardData?.categoryChart.map((item) => item.color) || [],
+  //       borderWidth: 1,
+  //     },
+  //   ],
+  // };
   const revenueChartData = {
-    labels: dashboardData?.revenueByMonth.map((item) => item.month) || [],
-    datasets: [
-      {
-        label: "Revenue",
-        data: dashboardData?.revenueByMonth.map((item) => item.revenue) || [],
-        borderColor: "rgb(59, 130, 246)",
-        backgroundColor: "rgba(59, 130, 246, 0.5)",
-        tension: 0.4,
-      },
-    ],
+    labels: dashboardData?.revenueChart.map((item: any) => {
+      // Convert YYYY-MM to abbreviated month name
+      const [year, month] = item.month.split("-");
+      const date = new Date(Number.parseInt(year), Number.parseInt(month) - 1);
+      return date.toLocaleString("default", { month: "short" });
+    }),
+    values: dashboardData?.revenueChart.map((item: any) => item.revenue / 1000), // Convert to K
   };
 
-  const categoryChartData = {
-    labels: dashboardData?.ordersByCategory.map((item) => item.category) || [],
-    datasets: [
-      {
-        label: "Orders by Category",
-        data: dashboardData?.ordersByCategory.map((item) => item.count) || [],
-        backgroundColor: [
-          "rgba(59, 130, 246, 0.8)",
-          "rgba(16, 185, 129, 0.8)",
-          "rgba(249, 115, 22, 0.8)",
-          "rgba(236, 72, 153, 0.8)",
-          "rgba(139, 92, 246, 0.8)",
-        ],
-        borderColor: [
-          "rgba(59, 130, 246, 1)",
-          "rgba(16, 185, 129, 1)",
-          "rgba(249, 115, 22, 1)",
-          "rgba(236, 72, 153, 1)",
-          "rgba(139, 92, 246, 1)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
+  // Format orders for the table
+  const formattedOrders = dashboardData?.recentOrders.map((order: any) => ({
+    id: order.id,
+    customerName: order.userName || "Unknown",
+    productName: order.productName,
+    category: order.productCategory,
+    date: new Date(order.orderDate).toLocaleDateString(),
+    price: order.price,
+  }));
 
   // Helper function to format currency
   const formatCurrency = (value: number) => {
@@ -149,49 +111,42 @@ const AdminDashboard = () => {
           <p className="text-gray-500">{formattedDate}</p>
         </div>
 
-        <div className="mt-4 sm:mt-0">
+        {/* <div className="mt-4 sm:mt-0">
           <div className="inline-flex items-center rounded-md border border-gray-200 bg-white">
-            <button
-              onClick={() => setTimeFilter("this_month")}
-              className={`px-4 py-2 text-sm font-medium ${
-                timeFilter === "this_month"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-500 hover:text-gray-700"
-              } rounded-l-md`}
-            >
-              This Month
-            </button>
-            <button
-              onClick={() => setTimeFilter("last_month")}
-              className={`px-4 py-2 text-sm font-medium ${
-                timeFilter === "last_month"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-500 hover:text-gray-700"
-              } border-l border-gray-200`}
-            >
-              Last Month
-            </button>
-            <button
-              onClick={() => setTimeFilter("this_year")}
-              className={`px-4 py-2 text-sm font-medium ${
-                timeFilter === "this_year"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-500 hover:text-gray-700"
-              } border-l border-gray-200`}
-            >
-              This Year
-            </button>
-            <button
-              onClick={() => setTimeFilter("last_year")}
-              className={`px-4 py-2 text-sm font-medium ${
-                timeFilter === "last_year"
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-500 hover:text-gray-700"
-              } rounded-r-md border-l border-gray-200`}
-            >
-              Last Year
-            </button>
+            {(
+              [
+                "This Month",
+                "Last Month",
+                "This Year",
+                "Last Year",
+              ] as TimeFilter[]
+            ).map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setTimeFilter(filter)}
+                className={`px-4 py-2 text-sm font-medium ${
+                  timeFilter === filter
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-500 hover:text-gray-700"
+                } ${filter === "This Month" ? "rounded-l-md" : ""} ${
+                  filter === "Last Year"
+                    ? "rounded-r-md"
+                    : "border-l border-gray-200"
+                }`}
+              >
+                {filter}
+              </button>
+            ))}
           </div>
+        </div> */}
+
+        <div className="absolute right-0 top-full mt-1 z-50">
+          <DateFilter
+            onFilterChange={(filter) => {
+              setSelectedDateFilter(filter);
+            }}
+            defaultSelected={selectedDateFilter as any}
+          />
         </div>
       </div>
 
@@ -234,7 +189,7 @@ const AdminDashboard = () => {
                   </dt>
                   <dd>
                     <div className="text-xl font-semibold text-gray-900">
-                      {formatCurrency(dashboardData?.totalRevenue || 0)}
+                      {formatCurrency(dashboardData?.stats.totalRevenue || 0)}
                     </div>
                   </dd>
                 </dl>
@@ -270,7 +225,7 @@ const AdminDashboard = () => {
                   </dt>
                   <dd>
                     <div className="text-xl font-semibold text-gray-900">
-                      {dashboardData?.orderCount || 0}
+                      {dashboardData?.stats.totalOrders || 0}
                     </div>
                   </dd>
                 </dl>
@@ -306,7 +261,7 @@ const AdminDashboard = () => {
                   </dt>
                   <dd>
                     <div className="text-xl font-semibold text-gray-900">
-                      {dashboardData?.customerCount || 0}
+                      {dashboardData?.stats.customerCount || 0}
                     </div>
                   </dd>
                 </dl>
@@ -324,7 +279,8 @@ const AdminDashboard = () => {
             Revenue over time
           </h3>
           <div className="h-64 mt-4">
-            <Line
+            {/* <Line
+              key={`revenue-${timeFilter}`}
               data={revenueChartData}
               options={{
                 responsive: true,
@@ -335,7 +291,7 @@ const AdminDashboard = () => {
                   },
                 },
               }}
-            />
+            /> */}
           </div>
         </div>
 
@@ -345,7 +301,8 @@ const AdminDashboard = () => {
             Orders by categories
           </h3>
           <div className="flex justify-center h-64 mt-4">
-            <Pie
+            {/* <Pie
+              key={`category-${timeFilter}`}
               data={categoryChartData}
               options={{
                 responsive: true,
@@ -356,7 +313,7 @@ const AdminDashboard = () => {
                   },
                 },
               }}
-            />
+            /> */}
           </div>
         </div>
       </div>
@@ -366,7 +323,7 @@ const AdminDashboard = () => {
         <h3 className="text-lg font-medium text-gray-900 mb-4">Orders</h3>
         {dashboardData?.recentOrders &&
         dashboardData.recentOrders.length > 0 ? (
-          <OrderTable orders={dashboardData.recentOrders} isAdmin={true} />
+          <OrderTable orders={dashboardData.recentOrders} />
         ) : (
           <div className="bg-white p-6 rounded-lg shadow-sm text-center">
             <p className="text-gray-500">

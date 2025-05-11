@@ -1,12 +1,18 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { LogOut, Settings, BarChartBig, ShoppingCart, Users } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import React from "react";
+import { NavLink } from "react-router-dom";
+import {
+  LogOut,
+  Settings,
+  BarChartBig,
+  ShoppingCart,
+  Users,
+} from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Sidebar: React.FC = () => {
   const { auth, logout } = useAuth();
 
-  const isAdmin = auth.user?.role === 'admin';
+  const isAdmin = auth.user?.role === "admin";
 
   return (
     <div className="w-[220px] bg-white border-r border-gray-200 flex flex-col h-screen">
@@ -24,7 +30,7 @@ const Sidebar: React.FC = () => {
           {isAdmin ? (
             <>
               <NavLink
-                to="/dashboard"
+                to="/admin"
                 className={({ isActive }) =>
                   `flex items-center px-3 py-2.5 text-sm font-medium rounded-md ${
                     isActive

@@ -4,16 +4,14 @@ import { useAuth } from "../../contexts/AuthContext";
 import OrderTable from "../../components/orders/OrderTable";
 import OrderForm from "../../components/orders/OrderForm";
 import { Plus, X } from "lucide-react";
-import { API_URL } from "../../../utils/utils";
-
-interface Order {
-  id: string;
-  productName: string;
-  productCategory: string;
-  price: number;
-  orderDate: string;
-  customerName: string;
-}
+import { API_URL } from "../../utils/utils";
+import {
+  createOrder,
+  fetchCustomerOrders,
+} from "../../services/dashboardService";
+import { Order } from "../../types";
+import toast from "react-hot-toast";
+import TextComponent from "../../components/ui/TextComponent";
 
 const CustomerDashboard = () => {
   const { auth } = useAuth();
@@ -26,12 +24,12 @@ const CustomerDashboard = () => {
   const fetchOrders = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${API_URL}/orders/customer`);
-      setOrders(response.data);
+      const response = await fetchCustomerOrders();
+      setOrders(response);
       setError(null);
     } catch (err) {
-      console.error("Error fetching orders:", err);
-      setError("Failed to load orders. Please try again later.");
+      setError("Failed to fetch orders. Please try again.");
+      toast.error("Failed to fetch orders. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -41,16 +39,15 @@ const CustomerDashboard = () => {
     fetchOrders();
   }, []);
 
-  const handleOrderSubmit = async (
-    orderData: Omit<Order, "id" | "customerName">
-  ) => {
+  const handleOrderSubmit = async (orderData) => {
     try {
-      await axios.post(`${API_URL}/orders`, orderData);
+      await createOrder(orderData);
       setIsFormOpen(false);
-      fetchOrders();
+      toast.success("Order created successfully!");
+      await fetchOrders();
     } catch (err) {
-      console.error("Error creating order:", err);
       setError("Failed to create order. Please try again.");
+      toast.error("Failed to create order. Please try again.");
     }
   };
 
@@ -81,7 +78,7 @@ const CustomerDashboard = () => {
         <div className="flex justify-center items-center h-64">
           <p className="text-gray-500">Loading orders...</p>
         </div>
-      ) : orders.length === 0 ? (
+      ) : orders?.length === 0 ? (
         <div className="bg-white p-6 rounded-lg shadow-sm text-center">
           <p className="text-gray-500">You haven't placed any orders yet.</p>
           <button
@@ -98,16 +95,22 @@ const CustomerDashboard = () => {
       {/* Order Creation Modal */}
       {isFormOpen && (
         <div className="fixed inset-0 bg-[#09122782] bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Create an Order</h2>
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
+            <div className="flex justify-between items-center p-[20px]">
+              <TextComponent
+                bodyText
+                text="Create an Order"
+                className="font-semibold"
+                color="#0F172A"
+              />
               <button
                 onClick={() => setIsFormOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-[#232323] hover:text-gray-700"
               >
-                <X size={20} />
+                <X size={24} />
               </button>
             </div>
+            <hr />
             <OrderForm
               onSubmit={handleOrderSubmit}
               onCancel={() => setIsFormOpen(false)}

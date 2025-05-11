@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { UserRole } from "../../../../types";
+import { UserRole } from "../../types";
 
 interface ProtectedRouteProps {
   allowedRoles?: UserRole[];
@@ -21,7 +21,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     !allowedRoles.includes(auth.user?.role as UserRole)
   ) {
     if (auth.user?.role === "admin") {
-      return <Navigate to="/dashboard" replace />;
+      return <Navigate to="/admin" replace />;
     } else {
       return <Navigate to="/customer" replace />;
     }

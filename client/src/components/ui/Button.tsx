@@ -35,7 +35,7 @@ export default function CustomButton({
     if (disabled || loading) return "bg-blue-300 opacity-30";
 
     if (variant === "contained") {
-      return isHover ? "bg-blue-700" : "bg-blue-600";
+      return isHover ? "bg-blue-700" : "bg-[#2563EB]";
     }
 
     if (variant === "outlined" && isHover) {
@@ -57,7 +57,7 @@ export default function CustomButton({
 
   const getBorder = () => {
     if (variant === "outlined") {
-      return "border border-blue-600";
+      return "border border-[#EEEDF0]";
     }
 
     return "";
@@ -72,16 +72,17 @@ export default function CustomButton({
   };
 
   const commonClasses = `
-        rounded-lg 
+        rounded-sm 
         px-4 py-2 
-        min-w-full 
-        text-sm 
-        font-medium 
+   w-full
+         
+        font-[16px]
         flex 
         items-center 
         justify-center
-        capitalize 
-        font-sans 
+       
+        font-inter
+        font-semibold 
         ${getBackgroundColor()} 
         ${getTextColor()} 
         ${getBorder()} 

@@ -10,7 +10,7 @@ const AuthPage: React.FC = () => {
 
   if (auth.isAuthenticated) {
     if (auth.user?.role === "admin") {
-      return <Navigate to="/dashboard" replace />;
+      return <Navigate to="/admin" replace />;
     } else {
       return <Navigate to="/customer" replace />;
     }
@@ -25,7 +25,7 @@ const AuthPage: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center  px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full ">
         <div className="mx-auto h-12 w-12 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold">
-          XYZ
+          XYZ Shop
         </div>
         <CustomTabs tabs={tabs} defaultValue="login" />
       </div>

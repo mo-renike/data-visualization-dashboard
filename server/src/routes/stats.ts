@@ -66,7 +66,7 @@ router.get("/stats", authMiddleware, isAdmin, async (req, res) => {
       customerCount: Number(uniqueCustomers[0].count),
       revenueGrowth,
       orderGrowth,
-      customerGrowth: 0, // Would require historical data to calculate accurately
+      customerGrowth: 0,
     });
   } catch (error) {
     console.error("Error getting dashboard stats:", error);
@@ -98,7 +98,6 @@ router.get("/revenue-chart", authMiddleware, isAdmin, async (req, res) => {
 // Get category distribution data for pie chart
 router.get("/category-chart", authMiddleware, isAdmin, async (req, res) => {
   try {
-    // Get orders grouped by category
     const categoryCounts = await prisma.$queryRaw<
       { name: string; value: number }[]
     >`
@@ -112,7 +111,6 @@ router.get("/category-chart", authMiddleware, isAdmin, async (req, res) => {
     // Get total count for percentage calculation
     const totalOrders = await prisma.order.count();
 
-    // Add percentage and assign colors
     const colors = [
       "#FF6384",
       "#36A2EB",
@@ -174,7 +172,6 @@ router.get("/orders", authMiddleware, isAdmin, async (req, res) => {
         };
         break;
       default:
-        // No filter, return all orders
         break;
     }
 
