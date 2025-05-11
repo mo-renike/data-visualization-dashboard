@@ -182,6 +182,9 @@ router.get("/orders", authMiddleware, isAdmin, async (req, res) => {
       orderBy: {
         orderDate: "desc",
       },
+      include: {
+        user: true,
+      },
     });
 
     res.status(200).json(orders);

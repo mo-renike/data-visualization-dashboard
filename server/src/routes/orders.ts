@@ -12,18 +12,13 @@ router.get(
     try {
       const user = req.user!;
 
-      let orders;
-
-      if (user.role === "ADMIN") {
-        orders = await prisma.order.findMany({
-          orderBy: { orderDate: "desc" },
-        });
-      } else {
-        orders = await prisma.order.findMany({
-          where: { userId: user.id },
-          orderBy: { orderDate: "desc" },
-        });
-      }
+      const orders = await prisma.order.findMany({
+        where: { userId: user.id },
+        orderBy: { orderDate: "desc" },
+        include: {
+          user: true,
+        },
+      });
 
       res.status(200).json(orders);
     } catch (error) {

@@ -41,6 +41,7 @@ export interface Order {
   price: number;
   orderDate: string;
   userId: string;
+  user?: User;
 }
 
 export type TimeFilter =

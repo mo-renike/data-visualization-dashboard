@@ -15,6 +15,7 @@ export interface Order {
   productName: string;
   productCategory: string;
   price: number;
+  user: User;
   orderDate: Date;
   createdAt: Date;
 }

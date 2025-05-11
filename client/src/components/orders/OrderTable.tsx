@@ -22,8 +22,7 @@ const OrderTable = ({ orders }: OrderTableProps) => {
       currency: "USD",
     }).format(price);
   };
-  const { auth } = useAuth();
-  const customerName = auth.user?.name;
+
   return (
     <div className="bg-white overflow-hidden shadow-sm rounded-lg">
       <div className="overflow-x-auto">
@@ -70,9 +69,8 @@ const OrderTable = ({ orders }: OrderTableProps) => {
             {orders?.map((order) => (
               <tr key={order.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {customerName}
+                  {order.user?.name}
                 </td>
-
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {order.productName}
                 </td>

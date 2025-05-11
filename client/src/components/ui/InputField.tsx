@@ -44,7 +44,7 @@ const InputField: React.FC<InputFieldProps> = ({
           >
             {children}
           </Field>
-          {/* Caret-down icon */}
+
           <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
             <svg
               xmlns="http://www.w3.org/2000/svg"
