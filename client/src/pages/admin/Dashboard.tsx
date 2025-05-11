@@ -11,6 +11,8 @@ import StatCard from "../../components/ui/StatCard";
 import CategoryChart from "../../components/dashboard/categoryChart";
 import RevenueChart from "../../components/dashboard/revenueChart";
 import { useAuth } from "../../contexts/AuthContext";
+import TextComponent from "../../components/ui/TextComponent";
+import Spinner from "../../components/common/Spinner";
 
 export default function AdminDashboard() {
   const { auth } = useAuth();
@@ -151,23 +153,17 @@ export default function AdminDashboard() {
             {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
               <div className="lg:col-span-2 bg-white p-6 rounded-lg">
-                <h3 className="text-lg font-medium mb-4">Revenue over time</h3>
+                <TextComponent text="Revenue over time" smallTitleText />
                 {loading ? (
-                  <div className="h-64 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                  </div>
+                  <Spinner />
                 ) : (
                   <RevenueChart data={revenueChartData} />
                 )}
               </div>
               <div className="bg-white p-6 rounded-lg">
-                <h3 className="text-lg font-medium mb-4">
-                  Orders by categories
-                </h3>
+                <TextComponent text="Orders by Categories" smallTitleText />
                 {loading ? (
-                  <div className="h-64 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                  </div>
+                  <Spinner />
                 ) : (
                   <CategoryChart
                     data={dashboardData.categoryChart}
@@ -177,24 +173,18 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Orders */}
-            <div className="bg-white p-6 rounded-lg">
-              <h3 className="text-lg font-medium mb-4">Orders</h3>
-              {loading ? (
-                <div className="h-64 flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                </div>
-              ) : dashboardData.recentOrders &&
-                dashboardData.recentOrders.length > 0 ? (
-                <OrderTable orders={dashboardData.recentOrders} />
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">
-                    No orders found for the selected time period.
-                  </p>
-                </div>
-              )}
-            </div>
+            {loading ? (
+              <Spinner />
+            ) : dashboardData.recentOrders &&
+              dashboardData.recentOrders.length > 0 ? (
+              <OrderTable orders={dashboardData.recentOrders} />
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500">
+                  No orders found for the selected time period.
+                </p>
+              </div>
+            )}
           </div>
         </main>
       </div>

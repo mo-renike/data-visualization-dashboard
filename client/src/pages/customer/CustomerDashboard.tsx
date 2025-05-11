@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import OrderTable from "../../components/orders/OrderTable";
 import OrderForm from "../../components/orders/OrderForm";
-import { Plus, X } from "lucide-react";
-import { API_URL } from "../../utils/utils";
+import { X } from "lucide-react";
 import {
   createOrder,
   fetchCustomerOrders,
@@ -14,6 +12,9 @@ import toast from "react-hot-toast";
 import TextComponent from "../../components/ui/TextComponent";
 import Sidebar from "../../components/layout/SIdebar";
 import Header from "../../components/layout/Header";
+
+import { TableBtn } from "../../components/orders/TableUtils";
+import Spinner from "../../components/common/Spinner";
 
 const CustomerDashboard = () => {
   const { auth } = useAuth();
@@ -60,17 +61,6 @@ const CustomerDashboard = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
         <main className="container mx-auto max-w-6xl p-[32px]">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">Orders</h1>
-            <button
-              onClick={() => setIsFormOpen(true)}
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            >
-              <Plus size={18} className="mr-1" />
-              Create an Order
-            </button>
-          </div>
-
           {error && (
             <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
               <div className="flex">
@@ -82,23 +72,22 @@ const CustomerDashboard = () => {
           )}
 
           {isLoading ? (
-            <div className="flex justify-center items-center h-64">
-              <p className="text-gray-500">Loading orders...</p>
-            </div>
+            <Spinner />
           ) : orders?.length === 0 ? (
-            <div className="bg-white p-6 rounded-lg shadow-sm text-center">
+            <div className="bg-white p-6 rounded-lg shadow-sm text-center flex flex-col items-center">
               <p className="text-gray-500">
                 You haven't placed any orders yet.
-              </p>
-              <button
-                onClick={() => setIsFormOpen(true)}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Create your first order
-              </button>
+              </p>{" "}
+              <br />
+              <TableBtn onClick={() => setIsFormOpen(true)}>
+                Create An Order
+              </TableBtn>
             </div>
           ) : (
-            <OrderTable orders={orders} />
+            <OrderTable
+              orders={orders}
+              onOpenForm={() => setIsFormOpen(true)}
+            />
           )}
 
           {isFormOpen && (

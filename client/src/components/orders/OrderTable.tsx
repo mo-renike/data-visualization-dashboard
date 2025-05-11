@@ -1,92 +1,64 @@
-import React from "react";
-import { format } from "date-fns";
 import { Order } from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
+import { Plus } from "lucide-react";
+import TextComponent from "../ui/TextComponent";
+import { formatDate, formatPrice } from "../../utils/helper";
+import Box from "../ui/Box";
+import { TableBtn, TableCell, TableHeader } from "./TableUtils";
 
 interface OrderTableProps {
   orders: Order[];
+  onOpenForm?: () => void;
 }
 
-const OrderTable = ({ orders }: OrderTableProps) => {
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "MM/dd/yyyy");
-    } catch (e) {
-      return dateString;
-    }
-  };
+const OrderTable = ({ orders, onOpenForm }: OrderTableProps) => {
+  const { auth } = useAuth();
+  const isAdmin = auth.user?.role === "admin";
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(price);
-  };
+  const headers = [
+    "Customer name",
+    "Product name",
+    "Category",
+    "Date",
+    "Price",
+  ];
 
   return (
-    <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+    <div className="bg-white overflow-hidden p-6 rounded-lg">
+      <div className="flex justify-between items-center mb-6">
+        <TextComponent text="Orders" smallTitleText />
+        {!isAdmin && (
+          <TableBtn onClick={onOpenForm}>
+            <Plus size={18} className="mr-1" />
+            Create an Order
+          </TableBtn>
+        )}
+      </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Customer name
-              </th>
+        <table className="min-w-full">
+          <thead>
+            <tr className="bg-gray-50 rounded-lg">
+              <Box />
 
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Product name
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Category
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Date
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Price
-              </th>
-              <th scope="col" className="relative px-6 py-3">
-                <span className="sr-only">Actions</span>
+              {headers.map((header, index) => (
+                <TableHeader key={index}>{header}</TableHeader>
+              ))}
+              <th className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <span className="text-[#64748B]">•••</span>
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-[#F1F5F9]">
             {orders?.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {order.user?.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {order.productName}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {order.productCategory}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {formatDate(order.orderDate)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {formatPrice(order.price)}
-                </td>
+              <tr key={order.id} className="hover:bg-blue-50 align-middle">
+                <Box />
+                <TableCell>{order.user?.name}</TableCell>
+                <TableCell>{order.productName}</TableCell>
+                <TableCell>{order.productCategory}</TableCell>
+                <TableCell>{formatDate(order.orderDate)}</TableCell>
+                <TableCell>{formatPrice(order.price)}</TableCell>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button className="text-gray-400 hover:text-gray-600">
-                    •••
-                  </button>
+                  <span className="text-[#64748B]">•••</span>
                 </td>
               </tr>
             ))}

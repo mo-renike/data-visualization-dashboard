@@ -1,4 +1,5 @@
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { formatNumber } from "../../utils/helper";
 
 interface StatCardProps {
   title: string;
@@ -17,7 +18,7 @@ export default function StatCard({
 
   return (
     <div className="bg-white p-6 rounded-lg">
-      <h3 className="text-sm text-gray-500 mb-2">{title}</h3>
+      <h3 className="text-sm text-gray-500 mb-2 font-semibold">{title}</h3>
       <div className="flex items-baseline gap-2">
         <p className="text-2xl font-bold">
           {prefix}
@@ -26,8 +27,10 @@ export default function StatCard({
 
         {percentChange !== undefined && (
           <div
-            className={`flex items-center text-xs ${
-              isPositive ? "text-green-500" : "text-red-500"
+            className={`flex items-center text-xs rounded-xl py-1 px-3  ${
+              isPositive
+                ? "bg-[#F0FDF4] text-[#24D164]"
+                : "text-[#ED4F9D] bg-[#FDF2F8]"
             }`}
           >
             {isPositive ? (
@@ -35,7 +38,9 @@ export default function StatCard({
             ) : (
               <ArrowDown className="h-3 w-3" />
             )}
-            <span>{Math.abs(percentChange)}%</span>
+            <span className="ml-1 font-semibold">
+              {formatNumber(percentChange)}%
+            </span>
           </div>
         )}
       </div>

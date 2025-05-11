@@ -21,3 +21,8 @@ hr {
 
   border: 0;
 }
+
+input::placeholder {
+  font-size: 14px;
+  color: #858d9d;
+}

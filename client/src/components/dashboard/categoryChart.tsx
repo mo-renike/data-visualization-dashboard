@@ -68,7 +68,7 @@ export default function CategoryChart({ data, total }: CategoryChartProps) {
   }, [data, total]);
 
   return (
-    <div className="relative w-full h-64 flex items-center justify-center">
+    <div className="relative w-full h-64 flex items-center mt-8 justify-center">
       <canvas ref={chartRef}></canvas>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <div className="text-sm text-gray-500">Total</div>

@@ -15,7 +15,6 @@ export default function RevenueChart({ data }: RevenueChartProps) {
   useEffect(() => {
     if (!chartRef.current || !data.labels || data.labels.length === 0) return;
 
-    // Destroy existing chart
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
@@ -88,7 +87,7 @@ export default function RevenueChart({ data }: RevenueChartProps) {
   }, [data]);
 
   return (
-    <div className="w-full h-64">
+    <div className="w-full h-64 mt-8">
       <canvas ref={chartRef}></canvas>
     </div>
   );

@@ -2,7 +2,7 @@ import React from "react";
 
 interface TextComponentProps {
   text: string;
-  smallBodyText?: boolean;
+  smallTitleText?: boolean;
   bodyText?: boolean;
   subHeaderText?: boolean;
   color?: string;
@@ -11,7 +11,7 @@ interface TextComponentProps {
 
 const TextComponent: React.FC<TextComponentProps> = ({
   text,
-  smallBodyText = false,
+  smallTitleText = false,
   bodyText = false,
   subHeaderText = false,
   color,
@@ -23,15 +23,15 @@ const TextComponent: React.FC<TextComponentProps> = ({
     ? "text-[#0F172A]"
     : "text-[#64748B]";
 
-  const baseClasses = "font-inter font-normal leading-[175%]";
+  const baseClasses = "font-inter leading-[175%]";
 
   let specificClasses = "";
   if (subHeaderText) {
     specificClasses = "text-[24px] font-bold";
   } else if (bodyText) {
-    specificClasses = "text-[16px]";
-  } else if (smallBodyText) {
-    specificClasses = "text-[14px]";
+    specificClasses = "text-[16px] font-normal";
+  } else if (smallTitleText) {
+    specificClasses = "text-[15px] font-bold";
   }
 
   const combinedClasses = `${baseClasses} ${specificClasses} ${textColor} ${className}`;

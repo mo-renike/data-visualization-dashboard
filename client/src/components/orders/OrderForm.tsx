@@ -56,7 +56,7 @@ const OrderForm = ({ onSubmit, onCancel, customerName }: OrderFormProps) => {
                 type="text"
                 disabled
                 value={customerName}
-                className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm text-gray-500 sm:text-sm"
+                className="mt-1 block w-full p-2 border border-[#E0E2E7] rounded-lg my-1 bg-[#F9F9FC] cursor-not-allowed  text-gray-400 sm:text-sm"
               />
             </div>
 
@@ -93,7 +93,7 @@ const OrderForm = ({ onSubmit, onCancel, customerName }: OrderFormProps) => {
             </div>
 
             <div>
-              <Label htmlFor="price">Price</Label>
+              <Label htmlFor="price">Base Price</Label>
               <InputField
                 id="price"
                 name="price"
@@ -117,6 +117,7 @@ const OrderForm = ({ onSubmit, onCancel, customerName }: OrderFormProps) => {
               />
             </div>
           </div>
+          <hr />
           <div className="flex space-x-[12px] justify-between p-[20px]">
             <CustomButton
               text={isSubmitting ? "Creating Order..." : "Create an Order"}

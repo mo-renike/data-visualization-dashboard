@@ -82,7 +82,7 @@ export default function CustomButton({
         justify-center
        
         font-inter
-        font-semibold 
+      
         ${getBackgroundColor()} 
         ${getTextColor()} 
         ${getBorder()} 

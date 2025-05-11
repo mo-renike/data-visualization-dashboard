@@ -38,7 +38,7 @@ const InputField: React.FC<InputFieldProps> = ({
             as="select"
             id={id}
             name={name}
-            className={`appearance-none relative block w-full px-3 py-2 border border-[#E0E2E7] rounded-lg my-4 bg-[#F9F9FC] ${
+            className={`appearance-none relative block w-full p-2 border border-[#E0E2E7] rounded-lg my-1 bg-[#F9F9FC] ${
               errors && touched ? "border-red-300" : "border-gray-300"
             } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm ${className}`}
           >
@@ -62,7 +62,7 @@ const InputField: React.FC<InputFieldProps> = ({
           name={name}
           type={showPasswordToggle && showPassword ? "text" : type}
           autoComplete={autoComplete}
-          className={`appearance-none relative block w-full px-3 py-2 border border-[#E0E2E7] rounded-lg my-4 bg-[#F9F9FC] ${
+          className={`appearance-none relative block w-full p-2 border border-[#E0E2E7] rounded-lg my-1 bg-[#F9F9FC] ${
             errors && touched ? "border-red-300" : "border-gray-300"
           } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm ${className}`}
           placeholder={placeholder}
