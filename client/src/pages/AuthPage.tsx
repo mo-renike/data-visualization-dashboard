@@ -24,7 +24,7 @@ const AuthPage: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center  px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full ">
-        <div className="mx-auto h-12 w-12 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold">
+        <div className="mx-auto h-12 w-[100px] bg-blue-600 rounded-md flex items-center justify-center text-white font-bold">
           XYZ Shop
         </div>
         <CustomTabs tabs={tabs} defaultValue="login" />

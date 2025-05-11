@@ -5,25 +5,20 @@ import { authMiddleware, isAdmin } from "../middleware/auth";
 const router = Router();
 const prisma = new PrismaClient();
 
-// Get dashboard stats - Admin only
 router.get("/stats", authMiddleware, isAdmin, async (req, res) => {
   try {
-    // Get total revenue (sum of all order prices)
     const revenueResult = await prisma.order.aggregate({
       _sum: {
         price: true,
       },
     });
 
-    // Get order count
     const orderCount = await prisma.order.count();
 
-    // Get unique customer count
     const uniqueCustomers = await prisma.$queryRaw<{ count: BigInt }[]>`
       SELECT COUNT(DISTINCT "userId") as count FROM "Order"
     `;
 
-    // Get previous month data for comparison
     const currentDate = new Date();
     const previousMonth = new Date(currentDate);
     previousMonth.setMonth(previousMonth.getMonth() - 1);
@@ -49,7 +44,6 @@ router.get("/stats", authMiddleware, isAdmin, async (req, res) => {
       },
     });
 
-    // Calculate growth percentages
     const revenueGrowth = previousMonthRevenue._sum.price
       ? ((revenueResult._sum.price! - previousMonthRevenue._sum.price!) /
           previousMonthRevenue._sum.price!) *
@@ -74,10 +68,8 @@ router.get("/stats", authMiddleware, isAdmin, async (req, res) => {
   }
 });
 
-// Get revenue data by month for chart
 router.get("/revenue-chart", authMiddleware, isAdmin, async (req, res) => {
   try {
-    // Get orders grouped by month for the past year
     const result = await prisma.$queryRaw<{ month: string; revenue: number }[]>`
       SELECT 
         to_char("orderDate", 'YYYY-MM') as month,
@@ -95,7 +87,6 @@ router.get("/revenue-chart", authMiddleware, isAdmin, async (req, res) => {
   }
 });
 
-// Get category distribution data for pie chart
 router.get("/category-chart", authMiddleware, isAdmin, async (req, res) => {
   try {
     const categoryCounts = await prisma.$queryRaw<
@@ -108,7 +99,6 @@ router.get("/category-chart", authMiddleware, isAdmin, async (req, res) => {
       GROUP BY "productCategory"
     `;
 
-    // Get total count for percentage calculation
     const totalOrders = await prisma.order.count();
 
     const colors = [
@@ -134,7 +124,6 @@ router.get("/category-chart", authMiddleware, isAdmin, async (req, res) => {
   }
 });
 
-// Get filtered orders by time period
 router.get("/orders", authMiddleware, isAdmin, async (req, res) => {
   try {
     const { timeFilter } = req.query;

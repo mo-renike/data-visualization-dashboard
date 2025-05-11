@@ -20,7 +20,6 @@ export default function CategoryChart({ data, total }: CategoryChartProps) {
   useEffect(() => {
     if (!chartRef.current || !data || data.length === 0) return;
 
-    // Destroy existing chart
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
@@ -36,23 +35,28 @@ export default function CategoryChart({ data, total }: CategoryChartProps) {
           {
             data: data.map((item) => item.value),
             backgroundColor: data.map((item) => item.color),
-            borderWidth: 0,
-            // cutout: "70%",
           },
         ],
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: false,
+            position: "bottom",
+            labels: {
+              font: {
+                size: 12,
+              },
+              usePointStyle: true,
+              pointStyle: "circle",
+            },
           },
           tooltip: {
             callbacks: {
-              label: (context) => {
-                const dataPoint = data[context.dataIndex];
-                return `${dataPoint.name}: ${dataPoint.percentage}%`;
+              label: function (context) {
+                const dataIndex = context.dataIndex;
+                const item = data[dataIndex];
+                return `${item.name}: ${item.percentage}%`;
               },
             },
           },
@@ -68,11 +72,11 @@ export default function CategoryChart({ data, total }: CategoryChartProps) {
   }, [data, total]);
 
   return (
-    <div className="relative w-full h-64 flex items-center mt-8 justify-center">
+    <div className="relative w-full flex items-center mt-8 justify-center">
       <canvas ref={chartRef}></canvas>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <div className="text-sm text-gray-500">Total</div>
-        <div className="text-2xl font-bold">{total}</div>
+        <div className="text-2xl text-[#0F172A] font-bold">{total}</div>
       </div>
     </div>
   );

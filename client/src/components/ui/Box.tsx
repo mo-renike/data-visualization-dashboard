@@ -2,7 +2,7 @@ import React from "react";
 
 const Box = () => {
   return (
-    <span
+    <div
       style={{
         width: "21.47px",
         height: "14px",

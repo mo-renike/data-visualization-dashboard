@@ -38,7 +38,10 @@ const OrderTable = ({ orders, onOpenForm }: OrderTableProps) => {
         <table className="min-w-full">
           <thead>
             <tr className="bg-gray-50 rounded-lg">
-              <Box />
+              <th>
+                {" "}
+                <Box />
+              </th>
 
               {headers.map((header, index) => (
                 <TableHeader key={index}>{header}</TableHeader>
@@ -51,7 +54,10 @@ const OrderTable = ({ orders, onOpenForm }: OrderTableProps) => {
           <tbody className="bg-white divide-y divide-[#F1F5F9]">
             {orders?.map((order) => (
               <tr key={order.id} className="hover:bg-blue-50 align-middle">
-                <Box />
+                <th>
+                  {" "}
+                  <Box />
+                </th>
                 <TableCell>{order.user?.name}</TableCell>
                 <TableCell>{order.productName}</TableCell>
                 <TableCell>{order.productCategory}</TableCell>
