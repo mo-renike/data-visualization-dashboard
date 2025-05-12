@@ -15,12 +15,15 @@ export const fetchDashboardData = async (
     const [stats, revenueChart, categoryChart, orders] = await Promise.all([
       axios.get(`${API_URL}/stats/stats`, {
         headers: { Authorization: `Bearer ${token}` },
+        params: { timeFilter },
       }),
       axios.get(`${API_URL}/stats/revenue-chart`, {
         headers: { Authorization: `Bearer ${token}` },
+        params: { timeFilter },
       }),
       axios.get(`${API_URL}/stats/category-chart`, {
         headers: { Authorization: `Bearer ${token}` },
+        params: { timeFilter },
       }),
       axios.get(`${API_URL}/stats/orders`, {
         headers: { Authorization: `Bearer ${token}` },
