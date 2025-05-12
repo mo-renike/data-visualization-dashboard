@@ -102,15 +102,17 @@ const OrderTable = ({ orders, onOpenForm }: OrderTableProps) => {
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
           className={`p-2 rounded ${
-            currentPage === 1 ? "bg-gray-200" : "bg-blue-500 text-white text-xs"
+            currentPage === 1
+              ? "bg-gray-200"
+              : "bg-blue-500 text-white text-xs ml-auto"
           }`}
         >
-          Previous
+          Prev
         </button>
         <button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          className={`p-2 text-xs rounded ${
+          className={`p-2 text-xs rounded ml-2 ${
             currentPage === totalPages
               ? "bg-gray-200"
               : "bg-blue-500 text-white"
