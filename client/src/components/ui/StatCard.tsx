@@ -17,7 +17,7 @@ export default function StatCard({
   const isPositive = percentChange && percentChange > 0;
 
   return (
-    <div className="bg-white p-6 rounded-lg">
+    <div className="bg-whiterounded-lg px-6 border-r-1 border-[#E2E8F0]">
       <h3 className="text-sm text-gray-500 mb-2 font-semibold">{title}</h3>
       <div className="flex items-baseline gap-2">
         <p className="text-2xl font-bold">

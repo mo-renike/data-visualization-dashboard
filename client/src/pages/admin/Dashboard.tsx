@@ -131,7 +131,7 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="grid bg-white grid-cols-1 md:grid-cols-3 mb-8 py-6 rounded-lg">
               <StatCard
                 title="Total Revenue"
                 value={dashboardData.stats.totalRevenue}
