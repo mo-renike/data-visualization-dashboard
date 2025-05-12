@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+}
+
+hr {
+  height: 0.5px;
+  color: #d9d9d9;
+  background: #d9d9d9;
+
+  border: 0;
+}
+
+input::placeholder {
+  font-size: 14px;
+  color: #858d9d;
+}
