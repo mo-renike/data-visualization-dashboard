@@ -91,7 +91,7 @@ export default function AdminDashboard() {
 
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-7xl mx-auto">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
               <div>
                 <h1 className="text-2xl font-bold">
                   Welcome, {user?.name?.split(" ")[0]}
@@ -138,7 +138,7 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            <div className="grid bg-white grid-cols-1 md:grid-cols-3 mb-8 py-6 rounded-lg">
+            <div className="grid bg-white grid-cols-1 gap-6 md:grid-cols-3 mb-8 py-6 rounded-lg">
               <StatCard
                 title="Total Revenue"
                 value={dashboardData.stats.totalRevenue}
