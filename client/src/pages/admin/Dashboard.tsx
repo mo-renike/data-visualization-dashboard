@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { debounce } from "lodash";
 
 import { format } from "date-fns";
 import Header from "../../components/layout/Header";
@@ -40,13 +41,12 @@ export default function AdminDashboard() {
   const currentDate = new Date();
   const formattedDate = format(currentDate, "EEEE, dd MMMM yyyy");
 
-  useEffect(() => {
-    const loadDashboardData = async () => {
+  const debouncedFetchDashboardData = useCallback(
+    debounce(async (filter: TimeFilter) => {
       try {
         setLoading(true);
         setError(null);
-        const data = await fetchDashboardData(selectedDateFilter);
-
+        const data = await fetchDashboardData(filter);
         setDashboardData(data);
       } catch (err) {
         console.error("Dashboard error:", err);
@@ -56,19 +56,26 @@ export default function AdminDashboard() {
       } finally {
         setLoading(false);
       }
+    }, 300),
+    []
+  );
+
+  useEffect(() => {
+    debouncedFetchDashboardData(selectedDateFilter);
+  }, [selectedDateFilter, debouncedFetchDashboardData]);
+
+  const revenueChartData = useMemo(() => {
+    return {
+      labels: dashboardData.revenueChart.map((item: any) => {
+        const [year, month] = item.month.split("-");
+        const date = new Date(Number(year), Number(month) - 1);
+        return date.toLocaleString("default", { month: "short" });
+      }),
+      values: dashboardData.revenueChart.map(
+        (item: any) => item.revenue / 1000
+      ),
     };
-
-    loadDashboardData();
-  }, [selectedDateFilter]);
-
-  const revenueChartData = {
-    labels: dashboardData.revenueChart.map((item: any) => {
-      const [year, month] = item.month.split("-");
-      const date = new Date(Number(year), Number(month) - 1);
-      return date.toLocaleString("default", { month: "short" });
-    }),
-    values: dashboardData.revenueChart.map((item: any) => item.revenue / 1000),
-  };
+  }, [dashboardData.revenueChart]);
 
   const handleDateFilterChange = (filter: TimeFilter) => {
     setSelectedDateFilter(filter);
