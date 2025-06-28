@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Order } from "../../types";
 import { useAuth } from "../../contexts/AuthContext";
 import { Plus } from "lucide-react";
@@ -99,6 +99,7 @@ const OrderTable = ({ orders, onOpenForm }: OrderTableProps) => {
           Page {currentPage} of {totalPages}
         </span>
         <button
+          style={{ marginLeft: "auto" }}
           onClick={handlePreviousPage}
           disabled={currentPage === 1}
           className={`p-2 rounded ${
